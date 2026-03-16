@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Тест по программированию</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background:#f8f8f8;
+      color:#222;
+      padding:20px;
+      line-height:1.5;
+    }
+    .container {
+      max-width:680px;
+      margin:0 auto;
+      background:white;
+      border-radius:16px;
+      padding:32px;
+      box-shadow:0 4px 24px rgba(0,0,0,0.08);
+    }
+    h1 { font-size:2.4rem; text-align:center; margin-bottom:16px; }
+    h2 { font-size:1.8rem; margin:24px 0 16px; text-align:center; }
+    p  { color:#555; text-align:center; margin-bottom:32px; }
+
+    button {
+      background:#333;
+      color:white;
+      border:none;
+      padding:14px 32px;
+      font-size:1.1rem;
+      border-radius:10px;
+      cursor:pointer;
+      transition:background 0.2s;
+    }
+    button:hover { background:#222; }
+    button:disabled { background:#aaa; cursor:not-allowed; }
+
+    input[type="number"] {
+      width:100%;
+      font-size:1.8rem;
+      text-align:center;
+      padding:16px;
+      margin:20px 0 24px;
+      border:2px solid #ddd;
+      border-radius:10px;
+    }
+
+    .header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:32px;
+      font-size:1rem;
+      color:#666;
+    }
+    .progress {
+      height:8px;
+      background:#eee;
+      border-radius:4px;
+      flex:1;
+      margin:0 16px;
+      overflow:hidden;
+    }
+    #progress-fill {
+      height:100%;
+      width:0%;
+      background:#444;
+      transition:width 0.4s;
+    }
+
+    .question {
+      font-size:1.4rem;
+      margin-bottom:32px;
+      font-weight:500;
+    }
+
+    .option {
+      padding:16px 20px;
+      margin:12px 0;
+      background:#f5f5f5;
+      border:2px solid #e0e0e0;
+      border-radius:10px;
+      cursor:pointer;
+      transition:all 0.15s;
+    }
+    .option:hover {
+      background:#eee;
+      border-color:#ccc;
+    }
+    .option.selected {
+      background:#e8f0ff;
+      border-color:#4488ff;
+      color:#0044cc;
+    }
+
+    .nav { display:flex; justify-content:space-between; margin-top:40px; }
+    .nav button { padding:12px 28px; font-size:1rem; }
+    #prev-btn { background:#e0e0e0; color:#333; }
+    #prev-btn:hover { background:#d0d0d0; }
+
+    .big-emoji { font-size:5rem; text-align:center; margin:24px 0 16px; }
+
+    .result-line {
+      display:flex;
+      justify-content:space-between;
+      font-size:1.2rem;
+      margin:16px 0;
+      padding:12px 0;
+      border-bottom:1px solid #eee;
+    }
+    .result-line strong { font-size:1.4rem; }
+
+    .hidden { display:none !important; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Вступление -->
+  <div id="intro">
+    <h1>Тест по программированию</h1>
+    <p>Проверь свои знания по основам</p>
+    <button id="start">Начать</button>
+  </div>
+
+  <!-- Вопросы -->
+  <div id="quiz" class="hidden">
+    <div class="header">
+      <div id="counter">1 / 25</div>
+      <div class="progress"><div id="progress-fill"></div></div>
+    </div>
+    <div id="question" class="question"></div>
+    <div id="options"></div>
+    <div class="nav">
+      <button id="prev">Назад</button>
+      <button id="next">Далее</button>
+    </div>
+  </div>
+
+  <!-- Возраст -->
+  <div id="age" class="hidden">
+    <h2>Сколько тебе лет?</h2>
+    <input type="number" id="age-in" min="10" max="100" placeholder="18">
+    <button id="finish">Показать результат</button>
+  </div>
+
+  <!-- Результат -->
+  <div id="result" class="hidden">
+    <div id="emoji" class="big-emoji"></div>
+    <h2 id="verdict">Результат</h2>
+    <div class="result-line"><span>Возраст:</span> <strong id="age-out"></strong></div>
+    <div class="result-line"><span>Правильных ответов:</span> <strong id="correct-out"></strong></div>
+    <div class="result-line"><span>Неправильных ответов:</span> <strong id="wrong-out"></strong></div>
+    <button id="restart">Пройти заново</button>
+  </div>
+
+</div><script>
+// 25 вопросов среднего уровня
+const questions = [
+  { q: "Какой тег создаёт параграф в HTML?", a: ["<div>", "<p>", "<span>", "<text>"], c: 1 },
+  { q: "Как задать красный цвет текста в CSS?", a: ["text-color: red;", "color: red;", "font-color: red;", "background: red;"], c: 1 },
+  { q: "Какой селектор выбирает элемент с id='menu'?", a: [".menu", "#menu", "menu", "*menu"], c: 1 },
+  { q: "В JavaScript console.log(typeof NaN) выведет:", a: ["number", "string", "undefined", "NaN"], c: 0 },
+  { q: "Какой оператор сравнения проверяет равенство без приведения типов?", a: ["==", "===", "!=", "!=="], c: 1 },
+  { q: "Как создать список в Python?", a: ["list = []", "array = {}", "list = {}", "array = []"], c: 0 },
+  { q: "Что выведет print(3 * 'hi') в Python?", a: ["Ошибка", "hi hi hi", "333", "hi3"], c: 1 },
+  { q: "Какой цикл в C++ используется для известного количества итераций?", a: ["while", "do-while", "for", "foreach"], c: 2 },
+  { q: "Как объявить константу в C++?", a: ["const int x = 5;", "let x = 5;", "final int x = 5;", "#define x 5"], c: 0 },
+  { q: "Что делает метод .push() в JavaScript?", a: ["удаляет элемент", "добавляет в конец массива", "сортирует массив", "объединяет массивы"], c: 1 },
+  { q: "Какой метод в Python возвращает длину строки/списка?", a: ["size()", "len()", "length()", "count()"], c: 1 },
+  { q: "В CSS свойство display: flex; делает элемент:", a: ["блочным", "строчным", "гибким контейнером", "табличным"], c: 2 },
+  { q: "Какой оператор в Python проверяет, есть ли элемент в списке?", a: ["in", "contains", "exists", "has"], c: 0 },
+  { q: "Что такое указатель в C++?", a: ["переменная, хранящая адрес", "ссылка на функцию", "массив чисел", "класс"], c: 0 },
+  { q: "Какой метод преобразует строку в число в JavaScript?", a: ["toNumber()", "parseInt()", "Number.parse()", "int()"], c: 1 },
+  { q: "Что выведет в Python: print(2**3**2)?", a: ["512", "64", "81", "512"], c: 0 },
+  { q: "Какой тег HTML используется для формы?", a: ["<input>", "<form>", "<button>", "<table>"], c: 1 },
+  { q: "В CSS как задать отступ внутри элемента?", a: ["margin", "padding", "border", "space"], c: 1 },
+  { q: "Какой тип данных в Python для целых чисел?", a: ["int", "float", "double", "number"], c: 0 },
+  { q: "Как создать функцию в C++?", a: ["function f() {}", "void f() {}", "def f():", "func f()"], c: 1 },
+  { q: "Что делает метод .map() в JavaScript?", a: ["фильтрует массив", "преобразует каждый элемент", "сортирует", "объединяет"], c: 1 },
+  { q: "Какой оператор в Python для целочисленного деления?", a: ["/", "//", "%", "**"], c: 1 },
+  { q: "В C++ как получить адрес переменной?", a: ["&var", "*var", "addr(var)", "ptr(var)"], c: 0 },
+  { q: "Какой псевдокласс в CSS для наведения курсора?", a: [":hover", ":focus", ":active", ":visited"], c: 0 },
+  { q: "Что выведет в Python: bool('')?", a: ["True", "False", "None", "Ошибка"], c: 1 }
+];
+
+// состояние
+let current = 0;
+let answers = new Array(questions.length).fill(-1);
+
+// элементы
+const intro   = document.getElementById("intro");
+const quiz    = document.getElementById("quiz");
+const ageDiv  = document.getElementById("age");
+const result  = document.getElementById("result");
+
+const start   = document.getElementById("start");
+const prev    = document.getElementById("prev");
+const next    = document.getElementById("next");
+const finish  = document.getElementById("finish");
+const restart = document.getElementById("restart");
+
+const counter     = document.getElementById("counter");
+const progress    = document.getElementById("progress-fill");
+const questionEl  = document.getElementById("question");
+const optionsEl   = document.getElementById("options");
+const ageIn       = document.getElementById("age-in");
+const emojiEl     = document.getElementById("emoji");
+const verdictEl   = document.getElementById("verdict");
+const ageOut      = document.getElementById("age-out");
+const correctOut  = document.getElementById("correct-out");
+const wrongOut    = document.getElementById("wrong-out");
+
+// показать только один блок
+function show(what) {
+  [intro, quiz, ageDiv, result].forEach(el => el.classList.add("hidden"));
+  what.classList.remove("hidden");
+}
+
+// показать вопрос
+function showQuestion() {
+  const q = questions[current];
+  questionEl.textContent = q.q;
+  counter.textContent = (current+1) + " / " + questions.length;
+  progress.style.width = ((current+1) / questions.length * 100) + "%";
+
+  optionsEl.innerHTML = "";
+  q.a.forEach((txt, i) => {
+    let op = document.createElement("div");
+    op.className = "option";
+    if (answers[current] === i) op.classList.add("selected");
+    op.textContent = txt;
+    op.onclick = () => {
+      answers[current] = i;
+      showQuestion();
+    };
+    optionsEl.appendChild(op);
+  });
+
+  prev.disabled = current === 0;
+}
+
+// следующий
+function goNext() {
+  if (answers[current] === -1) {
+    alert("Выбери вариант ответа");
+    return;
+  }
+  if (current < questions.length - 1) {
+    current++;
+    showQuestion();
+  } else {
+    show(ageDiv);
+  }
+}
+
+// предыдущий
+function goPrev() {
+  if (current > 0) {
+    current--;
+    showQuestion();
+  }
+}
+
+// результат
+function showResult() {
+    let val = ageIn.value.trim();
+if (!val || isNaN(val) || val < 10 || val > 100) {
+    alert("Возраст от 10 до 100 лет");
+    return;
+}
+    let age = parseInt(val, 10);
+
+    let correct = 0;
+    for (let i = 0; i < questions.length; i++) {
+        if (answers[i] === questions[i].c) {
+            correct++;
+        }
+    }
+
+    let wrong = questions.length - correct;
+
+    let verdict = "Плохо";
+    let em = "😕";
+
+    if (correct >= 21) {
+        verdict = "Отлично!";
+        em = "🔥";
+    } else if (correct >= 17) {
+        verdict = "Хорошо";
+        em = "👍";
+    } else if (correct >= 13) {
+        verdict = "Нормально";
+        em = "😐";
+    }
+
+    emojiEl.textContent = em;
+    verdictEl.textContent = verdict;
+    ageOut.textContent = age + " лет";
+    correctOut.textContent = correct;
+    wrongOut.textContent = wrong;
+
+    show("result");
+}
+
+// перезапуск
+function restartTest() {
+  current = 0;
+  answers.fill(-1);
+  ageIn.value = "";
+  show(intro);
+}
+
+// события
+start.onclick   = () => { show(quiz); showQuestion(); };
+prev.onclick    = goPrev;
+next.onclick    = goNext;
+finish.onclick  = showResult;
+restart.onclick = restartTest;
+
+// старт
+show(intro);
+</script>
+</body>
+</html>
