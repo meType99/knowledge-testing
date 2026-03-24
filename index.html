@@ -1,330 +1,316 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Тест по программированию</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
+<meta charset="UTF-8">
+<title>Тест по программированию</title>
 
-      font-family: system-ui, sans-serif;
-      background:#f8f8f8;
-      color:#222;
-      padding:20px;
-      line-height:1.5;
-    }
-    .container {
-      max-width:680px;
-      margin:0 auto;
-      background:white;
-      border-radius:16px;
-      padding:32px;
-      box-shadow:0 4px 24px rgba(0,0,0,0.08);
-    }
-    h1 { font-size:2.4rem; text-align:center; margin-bottom:16px; }
-    h2 { font-size:1.8rem; margin:24px 0 16px; text-align:center; }
-    p  { color:#555; text-align:center; margin-bottom:32px; }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  text-align: center;
+  margin: 0;
+}
 
-    button {
-      background:#333;
-      color:white;
-      border:none;
-      padding:14px 32px;
-      font-size:1.1rem;
-      border-radius:10px;
-      cursor:pointer;
-      transition:background 0.2s;
-    }
-    button:hover { background:#222; }
-    button:disabled { background:#aaa; cursor:not-allowed; }
+h1 {
+  background: #ffffff;
+  padding: 20px;
+  margin: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
 
-    input[type="number"] {
-      width:100%;
-      font-size:1.8rem;
-      text-align:center;
-      padding:16px;
-      margin:20px 0 24px;
-      border:2px solid #ddd;
-      border-radius:10px;
-    }
+.container {
+  background: #ffffff;
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
 
-    .header {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:32px;
-      font-size:1rem;
-      color:#666;
-    }
-    .progress {
-      height:8px;
-      background:#eee;
-      border-radius:4px;
-      flex:1;
-      margin:0 16px;
-      overflow:hidden;
-    }
-    #progress-fill {
-      height:100%;
-      width:0%;
-      background:#444;
-      transition:width 0.4s;
-    }
+button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  background: #e0e0e0;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
 
-    .question {
-      font-size:1.4rem;
-      margin-bottom:32px;
-      font-weight:500;
-    }
+button:hover {
+  background: #d5d5d5;
+}
 
-    .option {
-      padding:16px 20px;
-      margin:12px 0;
-      background:#f5f5f5;
-      border:2px solid #e0e0e0;
-      border-radius:10px;
-      cursor:pointer;
-      transition:all 0.15s;
-    }
-    .option:hover {
-      background:#eee;
-      border-color:#ccc;
-    }
-    .option.selected {
-      background:#e8f0ff;
-      border-color:#4488ff;
-      color:#0044cc;
-    }
+button.correct {
+  background: #4CAF50 !important;
+  color: white;
+}
 
-    .nav { display:flex; justify-content:space-between; margin-top:40px; }
-    .nav button { padding:12px 28px; font-size:1rem; }
-    #prev-btn { background:#e0e0e0; color:#333; }
-    #prev-btn:hover { background:#d0d0d0; }
+button.wrong {
+  background: #f44336 !important;
+  color: white;
+}
 
-    .big-emoji { font-size:5rem; text-align:center; margin:24px 0 16px; }
+.hidden {
+  display: none;
+}
 
-    .result-line {
-      display:flex;
-      justify-content:space-between;
-      font-size:1.2rem;
-      margin:16px 0;
-      padding:12px 0;
-      border-bottom:1px solid #eee;
-    }
-    .result-line strong { font-size:1.4rem; }
+#timer {
+  color: #555;
+  margin-bottom: 10px;
+}
+</style>
 
-    .hidden { display:none !important; }
-  </style>
 </head>
+
 <body>
 
-<div class="container">
+<h1>Тест по программированию</h1>
 
-  <!-- Вступление -->
-  <div id="intro">
-    <h1>Тест по программированию</h1>
-    <p>Проверь свои знания по основам</p>
-    <button id="start">Начать</button>
-  </div>
+<div class="container" id="start">
+<h2>Выберите уровень</h2>
+<button onclick="startTest('easy')">Легкий</button>
+<button onclick="startTest('medium')">Средний</button>
+<button onclick="startTest('hard')">Сложный</button>
+</div>
 
-  <!-- Вопросы -->
-  <div id="quiz" class="hidden">
-    <div class="header">
-      <div id="counter">1 / 25</div>
-      <div class="progress"><div id="progress-fill"></div></div>
-    </div>
-    <div id="question" class="question"></div>
-    <div id="options"></div>
-    <div class="nav">
-      <button id="prev">Назад</button>
-      <button id="next">Далее</button>
-    </div>
-  </div>
+<div class="container hidden" id="quiz">
+<div id="timer">Время: 0</div>
+<h2 id="question"></h2>
+<div id="answers"></div>
+<button onclick="nextQuestion()">Далее</button>
+</div>
 
-  <!-- Возраст -->
-  <div id="age" class="hidden">
-    <h2>Сколько тебе лет?</h2>
-    <input type="number" id="age-in" min="10" max="100" placeholder="18">
-    <button id="finish">Показать результат</button>
-  </div>
+<div class="container hidden" id="result">
+<h2>Результаты</h2>
+<p id="score"></p>
+<p id="avgTime"></p>
+<p id="errors"></p>
+<canvas id="chart" width="200" height="200"></canvas>
+</div>
 
-  <!-- Результат -->
-  <div id="result" class="hidden">
-    <div id="emoji" class="big-emoji"></div>
-    <h2 id="verdict">Результат</h2>
-    <div class="result-line"><span>Возраст:</span> <strong id="age-out"></strong></div>
-    <div class="result-line"><span>Правильных ответов:</span> <strong id="correct-out"></strong></div>
-    <div class="result-line"><span>Неправильных ответов:</span> <strong id="wrong-out"></strong></div>
-    <button id="restart">Пройти заново</button>
-  </div>
+<script>
+// ===== ВОПРОСЫ =====
+const questions = {
+easy: [
+{q:"HTML это?", a:["Язык разметки","Язык программирования","БД"], correct:0},
+{q:"CSS отвечает за?", a:["Стиль","Логику","Сервер"], correct:0},
+{q:"Python файл?", a:[".py",".js",".html"], correct:0},
+{q:"JS выполняется?", a:["В браузере","В BIOS","В принтере"], correct:0},
+{q:"C++ это?", a:["Язык программирования","ОС","Редактор"], correct:0},
+{q:"<p> это?", a:["Тег","Функция","Переменная"], correct:0},
+{q:"CSS цвет?", a:["color","font","bg"], correct:0},
+{q:"Python print?", a:["Вывод","Ввод","Цикл"], correct:0},
+{q:"JS переменная?", a:["let","echo","varr"], correct:0},
+{q:"HTML заголовок?", a:["<h1>","<p>","<div>"], correct:0}
+],
 
-</div><script>
-// 25 вопросов среднего уровня
-const questions = [
-  { q: "Какой тег создаёт параграф в HTML?", a: ["<div>", "<p>", "<span>", "<text>"], c: 1 },
-  { q: "Как задать красный цвет текста в CSS?", a: ["text-color: red;", "color: red;", "font-color: red;", "background: red;"], c: 1 },
-  { q: "Какой селектор выбирает элемент с id='menu'?", a: [".menu", "#menu", "menu", "*menu"], c: 1 },
-  { q: "В JavaScript console.log(typeof NaN) выведет:", a: ["number", "string", "undefined", "NaN"], c: 0 },
-  { q: "Какой оператор сравнения проверяет равенство без приведения типов?", a: ["==", "===", "!=", "!=="], c: 1 },
-  { q: "Как создать список в Python?", a: ["list = []", "array = {}", "list = {}", "array = []"], c: 0 },
-  { q: "Что выведет print(3 * 'hi') в Python?", a: ["Ошибка", "hi hi hi", "333", "hi3"], c: 1 },
-  { q: "Какой цикл в C++ используется для известного количества итераций?", a: ["while", "do-while", "for", "foreach"], c: 2 },
-  { q: "Как объявить константу в C++?", a: ["const int x = 5;", "let x = 5;", "final int x = 5;", "#define x 5"], c: 0 },
-  { q: "Что делает метод .push() в JavaScript?", a: ["удаляет элемент", "добавляет в конец массива", "сортирует массив", "объединяет массивы"], c: 1 },
-  { q: "Какой метод в Python возвращает длину строки/списка?", a: ["size()", "len()", "length()", "count()"], c: 1 },
-  { q: "В CSS свойство display: flex; делает элемент:", a: ["блочным", "строчным", "гибким контейнером", "табличным"], c: 2 },
-  { q: "Какой оператор в Python проверяет, есть ли элемент в списке?", a: ["in", "contains", "exists", "has"], c: 0 },
-  { q: "Что такое указатель в C++?", a: ["переменная, хранящая адрес", "ссылка на функцию", "массив чисел", "класс"], c: 0 },
-  { q: "Какой метод преобразует строку в число в JavaScript?", a: ["toNumber()", "parseInt()", "Number.parse()", "int()"], c: 1 },
-  { q: "Что выведет в Python: print(2**3**2)?", a: ["512", "64", "81", "512"], c: 0 },
-  { q: "Какой тег HTML используется для формы?", a: ["<input>", "<form>", "<button>", "<table>"], c: 1 },
-  { q: "В CSS как задать отступ внутри элемента?", a: ["margin", "padding", "border", "space"], c: 1 },
-  { q: "Какой тип данных в Python для целых чисел?", a: ["int", "float", "double", "number"], c: 0 },
-  { q: "Как создать функцию в C++?", a: ["function f() {}", "void f() {}", "def f():", "func f()"], c: 1 },
-  { q: "Что делает метод .map() в JavaScript?", a: ["фильтрует массив", "преобразует каждый элемент", "сортирует", "объединяет"], c: 1 },
-  { q: "Какой оператор в Python для целочисленного деления?", a: ["/", "//", "%", "**"], c: 1 },
-  { q: "В C++ как получить адрес переменной?", a: ["&var", "*var", "addr(var)", "ptr(var)"], c: 0 },
-  { q: "Какой псевдокласс в CSS для наведения курсора?", a: [":hover", ":focus", ":active", ":visited"], c: 0 },
-  { q: "Что выведет в Python: bool('')?", a: ["True", "False", "None", "Ошибка"], c: 1 }
-];
+medium: [
+{q:"C++ поддерживает ООП?", a:["Да","Нет","Только частично"], correct:0},
+{q:"Python отступы?", a:["Обязательны","Нет","Случайны"], correct:0},
+{q:"JS массив?", a:["[]","()","{}"], correct:0},
+{q:"CSS flex используется для?", a:["Гибкой верстки","БД","API"], correct:0},
+{q:"HTML форма?", a:["<form>","<div>","<span>"], correct:0},
+{q:"JS функция объявляется через?", a:["function","def","fun"], correct:0},
+{q:"Python цикл?", a:["for","repeat","loop"], correct:0},
+{q:"C++ ввод данных?", a:["cin","print","scan"], correct:0},
+{q:"CSS класс обозначается?", a:[".","#","@"], correct:0},
+{q:"JS объект?", a:["{}","[]","()"], correct:0}
+],
 
-// состояние
+hard: [
+{q:"Что такое замыкание в JS?", a:["Функция + область видимости","Цикл","Класс"], correct:0},
+{q:"Big O обозначает?", a:["Сложность алгоритма","Тип данных","Переменную"], correct:0},
+{q:"Python lambda это?", a:["Анонимная функция","Цикл","Класс"], correct:0},
+{q:"C++ указатель хранит?", a:["Адрес","Тип","Цикл"], correct:0},
+{q:"CSS z-index отвечает за?", a:["Слой","Цвет","Размер"], correct:0},
+{q:"JS Promise это?", a:["Асинхронность","Цикл","Тип"], correct:0},
+{q:"HTML семантика нужна для?", a:["Структуры","Стиля","API"], correct:0},
+{q:"Python list это?", a:["Список","Массив","Кортеж"], correct:0},
+{q:"C++ vector это?", a:["Контейнер","Файл","Функция"], correct:0},
+{q:"JS async/await используется для?", a:["Асинхронного кода","Синхронного","Ошибок"], correct:0}
+]
+};
+
+// ===== ПЕРЕМЕННЫЕ =====
 let current = 0;
-let answers = new Array(questions.length).fill(-1);
+let score = 0;
+let mistakes = 0;
+let times = [];
+let startTime;
+let timerInterval;
+let totalTime = 0;
+let levelData = [];
 
-// элементы
-const intro   = document.getElementById("intro");
-const quiz    = document.getElementById("quiz");
-const ageDiv  = document.getElementById("age");
-const result  = document.getElementById("result");
-
-const start   = document.getElementById("start");
-const prev    = document.getElementById("prev");
-const next    = document.getElementById("next");
-const finish  = document.getElementById("finish");
-const restart = document.getElementById("restart");
-
-const counter     = document.getElementById("counter");
-const progress    = document.getElementById("progress-fill");
-const questionEl  = document.getElementById("question");
-const optionsEl   = document.getElementById("options");
-const ageIn       = document.getElementById("age-in");
-const emojiEl     = document.getElementById("emoji");
-const verdictEl   = document.getElementById("verdict");
-const ageOut      = document.getElementById("age-out");
-const correctOut  = document.getElementById("correct-out");
-const wrongOut    = document.getElementById("wrong-out");
-
-// показать только один блок
-function show(what) {
-  [intro, quiz, ageDiv, result].forEach(el => el.classList.add("hidden"));
-  what.classList.remove("hidden");
-}
-
-// показать вопрос
-function showQuestion() {
-  const q = questions[current];
-  questionEl.textContent = q.q;
-  counter.textContent = (current+1) + " / " + questions.length;
-  progress.style.width = ((current+1) / questions.length * 100) + "%";
-
-  optionsEl.innerHTML = "";
-  q.a.forEach((txt, i) => {
-    let op = document.createElement("div");
-    op.className = "option";
-    if (answers[current] === i) op.classList.add("selected");
-    op.textContent = txt;
-    op.onclick = () => {
-      answers[current] = i;
-      showQuestion();
-    };
-    optionsEl.appendChild(op);
-  });
-
-  prev.disabled = current === 0;
-}
-
-// следующий
-function goNext() {
-  if (answers[current] === -1) {
-    alert("Выбери вариант ответа");
-    return;
-  }
-  if (current < questions.length - 1) {
-    current++;
-    showQuestion();
-  } else {
-    show(ageDiv);
-  }
-}
-
-// предыдущий
-function goPrev() {
-  if (current > 0) {
-    current--;
-    showQuestion();
-  }
-}
-
-// результат
-function showResult() {
-    let val = ageIn.value.trim();
-if (!val || isNaN(val) || val < 10 || val > 100) {
-    alert("Возраст от 10 до 100 лет");
-    return;
-}
-    let age = parseInt(val, 10);
-
-    let correct = 0;
-    for (let i = 0; i < questions.length; i++) {
-        if (answers[i] === questions[i].c) {
-            correct++;
-        }
+function shuffleAnswers(question){
+    let answers = question.a.map((text, index) => ({
+        text,
+        correct: index === question.correct
+    }));
+    for (let i = answers.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [answers[i], answers[j]] = [answers[j], answers[i]];
     }
+    return answers;
+}
 
-    let wrong = questions.length - correct;
+// ===== СТАРТ =====
+function startTest(level){
+    document.getElementById('start').classList.add('hidden');
+    document.getElementById('quiz').classList.remove('hidden');
 
-    let verdict = "Плохо";
-    let em = "😕";
+    // Копируем и перемешиваем вопросы
+    levelData = shuffleArray([...questions[level]]);
+    
+    current = 0;
+    score = 0;
+    mistakes = 0;
+    times = [];
+    totalTime = 0;
 
-    if (correct >= 21) {
-        verdict = "Отлично!";
-        em = "🔥";
-    } else if (correct >= 17) {
-        verdict = "Хорошо";
-        em = "👍";
-    } else if (correct >= 13) {
-        verdict = "Нормально";
-        em = "😐";
+    startTimer();
+    showQuestion();
+}
+
+// Функция перемешивания массива (Fisher-Yates)
+function shuffleArray(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-
-    emojiEl.textContent = em;
-    verdictEl.textContent = verdict;
-    ageOut.textContent = age + " лет";
-    correctOut.textContent = correct;
-    wrongOut.textContent = wrong;
-
-    show("result");
+    return arr;
 }
 
-// перезапуск
-function restartTest() {
-  current = 0;
-  answers.fill(-1);
-  ageIn.value = "";
-  show(intro);
+// ===== ТАЙМЕР =====
+function startTimer(){
+timerInterval = setInterval(()=>{
+totalTime++;
+document.getElementById('timer').innerText = "Время: " + totalTime;
+},1000);
 }
 
-// события
-start.onclick   = () => { show(quiz); showQuestion(); };
-prev.onclick    = goPrev;
-next.onclick    = goNext;
-finish.onclick  = showResult;
-restart.onclick = restartTest;
+// ===== ВОПРОС =====
+function showQuestion(){
+    let q = levelData[current];
+    document.getElementById('question').innerText = q.q;
 
-// старт
-show(intro);
+    // Перемешиваем ответы
+    let shuffledAnswers = shuffleAnswers(q);
+
+    let html = "";
+    shuffledAnswers.forEach(ans=>{
+        html += `<button onclick="checkAnswer(${ans.correct}, this)">${ans.text}</button>`;
+    });
+
+    document.getElementById('answers').innerHTML = html;
+    startTime = Date.now();
+}
+
+// ===== ПРОВЕРКА =====
+function checkAnswer(isCorrect, btn){
+    let timeSpent = (Date.now() - startTime)/1000;
+    times.push(timeSpent);
+
+    let buttons = document.querySelectorAll('#answers button');
+    buttons.forEach(b => b.disabled = true);
+
+    if(isCorrect){
+        score++;
+        btn.classList.add("correct");
+    } else {
+        mistakes++;
+        btn.classList.add("wrong");
+
+        // подсветка правильного ответа
+        buttons.forEach(b=>{
+            if(b.onclick.toString().includes("true")){
+                b.classList.add("correct");
+            }
+        });
+    }
+}
+
+
+// ===== ДАЛЕЕ =====
+function nextQuestion(){
+current++;
+if(current < levelData.length){
+showQuestion();
+}else{
+finishTest();
+}
+}
+
+// ===== СТАТИСТИКА =====
+function calculateStats(){
+let avg = times.reduce((a,b)=>a+b,0)/times.length;
+let errorPercent = (mistakes/levelData.length)*100;
+let correctPercent = 100 - errorPercent;
+
+return {
+avg: avg.toFixed(2),
+errorPercent: errorPercent.toFixed(2),
+correctPercent
+};
+}
+
+// ===== ФИНИШ =====
+function finishTest(){
+clearInterval(timerInterval);
+
+document.getElementById('quiz').classList.add('hidden');
+document.getElementById('result').classList.remove('hidden');
+
+let stats = calculateStats();
+
+document.getElementById('score').innerText =
+`Правильных: ${score}/${levelData.length}`;
+
+document.getElementById('avgTime').innerText =
+`Среднее время: ${stats.avg} сек`;
+
+document.getElementById('errors').innerText =
+`Ошибки: ${stats.errorPercent}%`;
+
+drawChart(score, mistakes);
+}
+
+// ===== ГРАФИК =====
+function drawChart(correct, errors){
+    let canvas = document.getElementById('chart');
+    let ctx = canvas.getContext('2d');
+
+    let total = correct + errors;
+    let correctAngle = (correct / total) * 2 * Math.PI;
+
+    // очистка
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let startAngle = 0;
+
+    // 🟢 правильные
+    ctx.beginPath();
+    ctx.moveTo(100,100);
+    ctx.arc(100,100,100, startAngle, startAngle + correctAngle);
+    ctx.closePath();
+    ctx.fillStyle = "#4CAF50";
+    ctx.fill();
+
+    // 🔴 ошибки
+    startAngle += correctAngle;
+
+    ctx.beginPath();
+    ctx.moveTo(100,100);
+    ctx.arc(100,100,100, startAngle, 2 * Math.PI);
+    ctx.closePath();
+    ctx.fillStyle = "#f44336";
+    ctx.fill();
+}
 </script>
+
 </body>
 </html>
